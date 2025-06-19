@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+  goals    Goal[] @relation("UserGoals")
+}
+
+model Goal {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  deadline    DateTime
+  isPublic    Boolean
+  order       Int
+  publicId    String?  @unique
+
+  // Self-referencing for nesting
+  parentId String?
+  parent   Goal?   @relation("GoalChildren", fields: [parentId], references: [id])
+  children Goal[]  @relation("GoalChildren")
+
+  // User reference
+  ownerId String
+  owner   User   @relation("UserGoals", fields: [ownerId], references: [id])
+}
