@@ -23,12 +23,13 @@ model Goal {
   order       Int
   publicId    String?  @unique
 
-  // Self-referencing for nesting
-  parentId String?
-  parent   Goal?   @relation("GoalChildren", fields: [parentId], references: [id])
-  children Goal[]  @relation("GoalChildren")
+  parentId    String?
+  parent      Goal?    @relation("GoalChildren", fields: [parentId], references: [id])
+  children    Goal[]   @relation("GoalChildren")
 
-  // User reference
-  ownerId String
-  owner   User   @relation("UserGoals", fields: [ownerId], references: [id])
+  ownerId     String
+  owner       User     @relation("UserGoals", fields: [ownerId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
