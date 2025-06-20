@@ -15,27 +15,34 @@ export class GoalsService {
     });
   }
 
-  async create(userId: string, data: CreateGoalDto) {
-    // enforce 2-level nesting
-    if (data.parentId) {
-      const parent = await prisma.goal.findUnique({ where: { id: data.parentId } });
-      if (!parent) throw new NotFoundException('Parent goal not found');
-
-      if (parent.parentId) {
-        throw new BadRequestException('Max nesting depth exceeded');
-      }
-    }
-
-    return prisma.goal.create({
-      data: {
-        ...data,
-       deadline: data.deadline && !isNaN(new Date(data.deadline).getTime())
-  ? new Date(data.deadline)
-  : new Date(),
-        ownerId: userId,
-      },
-    });
+ async create(userId: string, data: CreateGoalDto) {
+  if (!userId) {
+    throw new BadRequestException('Missing userId');
   }
+
+  if (data.parentId) {
+    const parent = await prisma.goal.findUnique({ where: { id: data.parentId } });
+    if (!parent) throw new NotFoundException('Parent goal not found');
+    if (parent.parentId) throw new BadRequestException('Max nesting depth exceeded');
+  }
+
+  const parsedDeadline = data.deadline && !isNaN(new Date(data.deadline).getTime())
+    ? new Date(data.deadline)
+    : new Date();
+
+  return prisma.goal.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      isPublic: data.isPublic ?? false,
+      deadline: parsedDeadline,
+      ...(data.parentId ? { parentId: data.parentId } : {}),
+      ownerId: userId,
+      order: 0 // Set a default order, adjust as needed
+    }
+  });
+}
+
 
   async update(userId: string, goalId: string, data: UpdateGoalDto) {
     const goal = await prisma.goal.findUnique({ where: { id: goalId } });
