@@ -39,8 +39,8 @@ export class PublicGoalsController {
     return this.goalsService.getPublicGoals();
   }
 
-  @Get(':publicId')
-  getPublicGoal(@Param('publicId') publicId: string) {
-    return this.goalsService.getPublicGoalByPublicId(publicId);
+  @Get(':Id')
+  getPublicGoal(@Param('Id') Id: string) {
+    return this.goalsService.getPublicGoalByPublicId(Id);
   }
 }

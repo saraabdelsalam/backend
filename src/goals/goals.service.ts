@@ -78,8 +78,8 @@ export class GoalsService {
     });
   }
 
-  async getPublicGoalByPublicId(publicId: string) {
-    const goal = await prisma.goal.findUnique({ where: { publicId } });
+  async getPublicGoalByPublicId(Id: string) {
+    const goal = await prisma.goal.findUnique({ where: { id: Id } });
     if (!goal || !goal.isPublic) throw new NotFoundException();
 
     const children = await prisma.goal.findMany({
