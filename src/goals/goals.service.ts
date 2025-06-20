@@ -29,7 +29,9 @@ export class GoalsService {
     return prisma.goal.create({
       data: {
         ...data,
-        deadline: new Date(data.deadline),
+       deadline: data.deadline && !isNaN(new Date(data.deadline).getTime())
+  ? new Date(data.deadline)
+  : new Date(),
         ownerId: userId,
       },
     });
