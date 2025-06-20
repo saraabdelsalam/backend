@@ -30,7 +30,7 @@ export class GoalsController {
   }
 }
 
-@Controller('public-goals')
+@Controller('public')
 export class PublicGoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
@@ -39,8 +39,8 @@ export class PublicGoalsController {
     return this.goalsService.getPublicGoals();
   }
 
-  @Get(':Id')
-  getPublicGoal(@Param('Id') Id: string) {
+  @Get(':id')
+  getPublicGoal(@Param('id') Id: string) {
     return this.goalsService.getPublicGoalByPublicId(Id);
   }
 }
